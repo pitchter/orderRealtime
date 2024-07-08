@@ -1,9 +1,9 @@
 package usecases
 
 import (
-	"github.com/pitchter/orderRealtime/internal/adapters/repositories"
-	"github.com/pitchter/orderRealtime/internal/entities"
-	// "github.com/pitchter/orderRealtime/internal/repositories"
+    "github.com/pitchter/orderRealtime/internal/entities"
+    "github.com/pitchter/orderRealtime/internal/adapters/repositories"
+    "github.com/pitchter/orderRealtime/internal/service"
 )
 
 type OrderUsecase struct {
@@ -15,5 +15,14 @@ func NewOrderUsecase(repo repositories.OrderRepository) *OrderUsecase {
 }
 
 func (uc *OrderUsecase) CreateOrder(order entities.Order) (entities.Order, error) {
-    return uc.orderRepo.CreateOrder(order)
+    createdOrder, err := uc.orderRepo.CreateOrder(order)
+    if err != nil {
+        return createdOrder, err
+    }
+    // Publish order created event
+    err = services.PublishOrderCreated(createdOrder)
+    if err != nil {
+        return createdOrder, err
+    }
+    return createdOrder, nil
 }

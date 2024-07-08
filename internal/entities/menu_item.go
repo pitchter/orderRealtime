@@ -1,7 +1,10 @@
 package entities
 
+import "gorm.io/gorm"
+
 type MenuItem struct {
-    ID       int     `json:"id"`
+    gorm.Model
+    ID       uint    `gorm:"primaryKey"`
     Name     string  `json:"name"`
     Price    float64 `json:"price"`
     Category string  `json:"category"`

@@ -3,17 +3,20 @@ package usecases
 import (
 	"github.com/pitchter/orderRealtime/internal/adapters/repositories"
 	"github.com/pitchter/orderRealtime/internal/entities"
-	// "github.com/pitchter/orderRealtime/internal/repositories"
 )
 
 type MenuUsecase struct {
-    menuRepo repositories.MenuRepository
+	menuRepo repositories.MenuRepository
 }
 
 func NewMenuUsecase(repo repositories.MenuRepository) *MenuUsecase {
-    return &MenuUsecase{menuRepo: repo}
+	return &MenuUsecase{menuRepo: repo}
 }
 
 func (uc *MenuUsecase) GetMenu() ([]entities.MenuItem, error) {
-    return uc.menuRepo.GetMenu()
+	return uc.menuRepo.GetMenu()
+}
+
+func (uc *MenuUsecase) CreateMenuItem(item entities.MenuItem) (entities.MenuItem, error) {
+	return uc.menuRepo.CreateMenuItem(item)
 }
