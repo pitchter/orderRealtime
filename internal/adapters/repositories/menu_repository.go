@@ -10,6 +10,7 @@ import (
 
 type MenuRepository interface {
     GetMenu() ([]entities.MenuItem, error)
+    GetMenuItemByID(id uint) (entities.MenuItem, error)
     CreateMenuItem(item entities.MenuItem) (entities.MenuItem, error)
 }
 
@@ -44,6 +45,12 @@ func (repo *menuRepository) GetMenu() ([]entities.MenuItem, error) {
     var menu []entities.MenuItem
     json.Unmarshal([]byte(val), &menu)
     return menu, nil
+}
+
+func (repo *menuRepository) GetMenuItemByID(id uint) (entities.MenuItem, error) {
+    var menuItem entities.MenuItem
+    result := repo.db.First(&menuItem, id)
+    return menuItem, result.Error
 }
 
 // ฟังก์ชั่นสร้างเมนูใหม่

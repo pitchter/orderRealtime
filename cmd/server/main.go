@@ -21,7 +21,7 @@ func main() {
 	menuHandler := handlers.NewMenuHandler(menuUsecase)
 
 	orderRepo := repositories.NewOrderRepository(database.DB)
-	orderUsecase := usecases.NewOrderUsecase(orderRepo)
+	orderUsecase := usecases.NewOrderUsecase(orderRepo, menuRepo)
 	orderHandler := handlers.NewOrderHandler(orderUsecase)
 
 	app := fiber.New()
