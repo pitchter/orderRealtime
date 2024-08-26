@@ -29,7 +29,7 @@ func Init() {
 	}
 
 	// Migrate the schema
-	db.AutoMigrate(&entities.MenuItem{}, &entities.Order{})
+	db.AutoMigrate(&entities.MenuItem{}, &entities.Order{}, &entities.OrderItem{})
 
 	DB = db
 }

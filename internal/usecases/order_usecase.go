@@ -19,16 +19,24 @@ func NewOrderUsecase(orderRepo repositories.OrderRepository, menuRepo repositori
 
 func (uc *OrderUsecase) CreateOrder(order entities.Order) (entities.Order, error) {
 	var total float64
+	var fullItems []entities.OrderItem
 
 	for _, item := range order.Items {
-		menuItem, err := uc.menuRepo.GetMenuItemByID(item.ID)
+		menuItem, err := uc.menuRepo.GetMenuItemByID(item.MenuItemID)
 		if err != nil {
 			return order, errors.New("menu item not found")
 		}
-		total += menuItem.Price
+
+		item.MenuItem = menuItem
+		item.TotalPrice = float64(item.Quantity) * menuItem.Price
+		total += item.TotalPrice
+
+		fullItems = append(fullItems, item)
 	}
 
 	order.Total = total
+	order.Items = fullItems
+
 	createdOrder, err := uc.orderRepo.CreateOrder(order)
 	if err != nil {
 		return createdOrder, err
