@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/websocket/v2"
 	"github.com/pitchter/orderRealtime/internal/adapters/database"
 	"github.com/pitchter/orderRealtime/internal/adapters/handlers"
@@ -21,14 +22,21 @@ func main() {
 	menuHandler := handlers.NewMenuHandler(menuUsecase)
 
 	orderRepo := repositories.NewOrderRepository(database.DB)
-	orderUsecase := usecases.NewOrderUsecase(orderRepo, menuRepo)
-	orderHandler := handlers.NewOrderHandler(orderUsecase)
+	orderUsecase := usecases.NewOrderUsecase(orderRepo, menuRepo, redisClient)
+	orderHandler := handlers.NewOrderHandler(orderUsecase, redisClient)
 
 	app := fiber.New()
 
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "http://localhost:4000",
+		AllowMethods: "GET,POST,PUT,DELETE",
+	}))
+
 	app.Get("/menu", menuHandler.GetMenu)
+	app.Get("/order/:id", orderHandler.GetOrder)
 	app.Post("/menu", menuHandler.CreateMenuItem)
 	app.Post("/order", orderHandler.CreateOrder)
+	app.Post("/order/reorder/:id", orderHandler.Reorder)
 
 	// Initialize and start the WebSocket handler
 	wsHandler := websockets.NewWebSocketHandler()
